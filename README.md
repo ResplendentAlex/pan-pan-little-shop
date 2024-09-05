@@ -1,7 +1,7 @@
 # pan-pan-little-shop
 
 **DESCRIPTION**<br>
-This project is one made during my colleges years. It is an Django-based web application that is revolves around the e-commerce trend.
+This project is one made during my colleges years. It is a Django-based web application that revolves around the e-commerce trend.
 
 
 **USAGE**<br>
