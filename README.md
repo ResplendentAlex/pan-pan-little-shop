@@ -10,7 +10,8 @@ The web project could be directly accessed from this page<br>
 
 
 **CONTRIBUTION**<br>
-If you wish to contribute to this project, you must first install Django framework as the application is fully developed with the framework.
+If you wish to contribute to this project, you must first have the Django framework installed into your device. This is because 
+the application is fully developed with the Django framework.
 Here a few links that you could use as tutorials to setup your project:
 1. [Real Python's Tutorial](https://realpython.com/django-setup/)
 2. [Django Official Documentation](https://docs.djangoproject.com/en/5.0/intro/tutorial01/)
