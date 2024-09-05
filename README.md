@@ -6,7 +6,7 @@ This project is one made during my colleges years. It is a Django-based web appl
 
 **USAGE**<br>
 The live web project could be directly accessed through the link below<br>
-[LINK TO WEBPAGE]([pbp.cs.ui.ac.id](http://alexander-william-panpanlittleshop.pbp.cs.ui.ac.id/))
+[LINK TO WEBPAGE](http://alexander-william-panpanlittleshop.pbp.cs.ui.ac.id/)
 
 
 **CONTRIBUTION**<br>
