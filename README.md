@@ -12,9 +12,8 @@ If you prefer to open it locally, however, simply clone this repository into you
 
 
 ## 🛠️ **CONTRIBUTION**<br>
-If you wish to contribute to this project, you must first have the Django framework installed into your device. This is because 
-the application is fully developed with the Django framework.
-Here a few links that you could use as tutorials to setup your project:
+If you wish to contribute to this project, you can clone the project directly and edit it with any code editor to your liking, assuming that you have Django already setup. If not, you should first get Django installed into your device before proceeding as the application is fully developed within the Django framework.<br>
+Here a few links that you might find helpful in setting up your project:
 1. [Real Python's Tutorial](https://realpython.com/django-setup/)
 2. [Django Official Documentation](https://docs.djangoproject.com/en/5.0/intro/tutorial01/)
 
