@@ -4,11 +4,14 @@
 <html>
     <head>
         <title>Pan-Pan Little Shop</title>
+        <link rel="icon" type="image/png" href="{% static 'assets/logo/panda_icon.png' %}">
         <style>
         </style>
     </head>
-    <h1 style="text-align: center; margin: 10px">Pan Pan Little Shop</h1>
-    <div style="display: flex; flex-direction: column; background-color: gray;height: 25%;width: 25%; padding: 10px; justify-content: baseline;">
-        <p style="text-align: center; margin: 0px; font-weight: bold; font-size: 24px;">Product Name</p>
-    </div>
+    <body>
+        <h1 style="text-align: center; margin: 10px">Pan Pan Little Shop</h1>
+        <div style="display: flex; flex-direction: column; background-color: gray;height: 25%;width: 25%; padding: 10px; justify-content: baseline;">
+            <p style="text-align: center; margin: 0px; font-weight: bold; font-size: 24px;">{{ name }}</p>
+        </div>
+    </body>
 </html>
