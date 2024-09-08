@@ -32,7 +32,7 @@ This project is licensed under the MIT License - refer to the LICENSE file for m
 **Class** : PBP F
 
 ## **TUGAS 2**<br>
-**Step-by-Step Project Setup Guide** <br>
+### **Step-by-Step Project Setup Guide** <br>
 
 **A. Konfigurasi Awal Proyek**
 1. Pastikan Django sudah terinstall pada perangkat yang akan digunakan.
@@ -191,3 +191,21 @@ This project is licensed under the MIT License - refer to the LICENSE file for m
     git branch -M main
     ```
 
+### **Bagan *Request Client* ke Django**<br>
+<img src="assets/logo/bagan.png"></img>
+
+### **Fungsi Git**<br>
+Dalam sebuah pengembangan proyek perangkat lunak, `git` memainkan peran yang sangat penting serta menyediakan pengguna dengan beberapa fitur yang akan membantu dalam masa pengembangan. Beberapa diantaranya adalah:
+1. ***Version Control*** - *developer* dapat menggunakan `git` sebagai tempat penyimpanan perubahan, dimana setiap perubahan pada kode yang sedang dikerjakan dapat disimpan pada `git`, sehingga akan mudah untuk membedakan versi-versi proyek yang sedang dikerjakan. 
+
+2. **Sarana Kolaborasi** - para *developer* juga dapat dengan mudah berkolaborasi dengan *developer* lain menggunakan fitur-fitur seperti `clone`, `pull-request`, `fork repository`, dll. Ini memudahkan para *developer* jika ingin mengerjakan suatu proyek besar yang membutuhkan lebih dari satu orang untuk menyelesaikannya.
+
+3. **Fleksibilitas Pengembangan Proyek** - `git` juga memungkinkan para *developer* untuk melakukan pengembangan proyek dimanapun dan kapanpun, karena `git` dapat diakses pada perangkat apa pun selama ada koneksi internet.
+
+### Kenapa Django dijadikan *framework* yang pertama kali kami pelajari?
+Menurut saya, walaupun ada beberapa hal yang mungkin menjadi pertimbangan para dosen saat memilih *framework* Django sebagai *framework* yang dipelajari, inti dari semua alasan tersebut adalah karena Django sangat *beginner-friendly*. 
+
+Dalam pengembangan web, kita tidak hanya bermain pada tampilan dan logika backend seperti routing, tetapi juga ada basis data yang digunakan untuk melakukan query atau sistem keamanan yang digunakan untuk mencegah serangan siber. Sebagi pemula yang masih memiliki tidak ada sampai sedikit pengetahuan mengenai aspek-aspek tersebut, Django menjadi sebuah pilihan yang terbaik karena sudah menyediakan *library-library* yang dapat langsung digunakan.
+
+### Mengapa model pada Django disebut sebagai *Object-Relational Mapping* (ORM)?
+Ini karena Django tidak perlu menggunakan query untuk berinteraksi dengan basis data yang digunakan. Dengan kata lain, Django memungkinkan kita untuk secara langsung berinteraksi dengan basis data yang telah dibuat menggunakan objek yang disediakan oleh Python.
