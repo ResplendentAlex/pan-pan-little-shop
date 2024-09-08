@@ -184,9 +184,9 @@ This project is licensed under the MIT License - refer to the LICENSE file for m
 
 4. Pada `settings.py` tambahkan URL *deployment* web dan tambahkan ke dalam `ALLOWED_HOSTS`.
 
-5. Jalakan perintah yang tertera pada tampilan *Project Command* pada PWS.
+5. Jalankan perintah yang tertera pada tampilan *Project Command* pada PWS.
 
-6. Setelah menjalanka perintah tersebut, kembalikan main branch dengan menggunakan perintah di bawah ini.
+6. Setelah menjalankan perintah tersebut, kembalikan main branch dengan menggunakan perintah di bawah ini.
     ```bash
     git branch -M main
     ```
