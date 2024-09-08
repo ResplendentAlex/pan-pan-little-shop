@@ -123,7 +123,7 @@ This project is licensed under the MIT License - refer to the LICENSE file for m
     from django.shortcuts import render
     ```
 
-3. Tambahkan fungsi `show_product()` dan `show_credentials()` dan isikan fungsi seperti di bawah ini.
+3. Tambahkan fungsi `show_product()` dan isikan fungsi seperti di bawah ini.
     ```python
     def show_main(request):
         context = {
@@ -131,15 +131,6 @@ This project is licensed under the MIT License - refer to the LICENSE file for m
             'price': 'Rp. 200.000',
             'stock': '10',
             'description': 'A self portrait of Pan-Pan, the panda.'
-        }
-
-    return render(request, "main.html", context)
-
-    def show_credentials(request):
-        context = {
-            'name': 'Alexander William Lim',
-            'npm': '2306207505',
-            'class': 'PBP F',
         }
 
     return render(request, "main.html", context)

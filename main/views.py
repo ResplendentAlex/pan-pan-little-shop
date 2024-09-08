@@ -9,12 +9,3 @@ def show_main(request):
     }
 
     return render(request, "main.html", context)
-
-def show_credentials(request):
-    context = {
-        'name': 'Alexander William Lim',
-        'npm': '2306207505',
-        'class': 'PBP F',
-    }
-
-    return render(request, "main.html", context)
