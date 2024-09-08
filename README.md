@@ -1,4 +1,4 @@
-# pan-pan-little-shop
+# <p align="center"><img src="assets/logo/icon_horizontal.png" style="width: 350px" alt="Pan Pan Little Shop"></p>
 
 **DESCRIPTION**<br>
 This project is one made during my colleges years. It is a Django-based web application that revolves around the e-commerce trend.
