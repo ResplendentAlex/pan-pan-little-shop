@@ -175,7 +175,7 @@ This project is licensed under the MIT License - refer to the LICENSE file for m
     ]
     ```
 
-**G. *Deployment* pada PWS (Pacil Web Service)**<br>
+**G. *Deployment* pada Pacil Web Service (PWS)**<br>
 1. Setelah menyelesaikan semua langkah di atas, kita akan melakukan *deployment* web melalui Pacil Web Service (PWS).
 
 2. Akses halaman PWS dan login menggunakan akun yang sudah terdaftar sebelumnya.
