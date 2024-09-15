@@ -87,13 +87,13 @@
     </head>
     <body>
         <div class="top-bar">
-            <img src="static/assets/logo/icon_horizontal.png" alt="Panda Icon">
+            <img src="{% static '/assets/logo/icon_horizontal.png' %}" alt="Panda Icon">
             <p>Login</p>
         </div>
         <div class = "main-content">
             <div class="container">
                 <div class="rows">
-                    <img src="static/assets/logo/panda_icon.png" alt="Product 1">
+                    <img src="{% static '/assets/logo/panda_icon.png' %}" alt="Product 1">
                     <div class="product-description">
                         <p style="font-weight: bold; font-size: 25px">
                             {{ name }}
@@ -109,7 +109,7 @@
                     </div>
                 </div>
                 <div class="rows">
-                    <img src="static/assets/logo/panda_icon.png" alt="Product 2">
+                    <img src="{% static '/assets/logo/panda_icon.png' %}" alt="Product 2">
                     <div class="product-description">
                         <p style="font-weight: bold; font-size: 25px">
                             {{ name }}
