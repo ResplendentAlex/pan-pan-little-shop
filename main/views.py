@@ -22,5 +22,5 @@ def add_product(request):
         form.save()
         return redirect("main:show_main")
 
-    context = {form: form}
+    context = {'form': form}
     return render(request, "add_product.html", context)

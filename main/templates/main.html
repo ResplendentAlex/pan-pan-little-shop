@@ -1,5 +1,5 @@
-{% load static %}
 {% extends 'base.html' %}
+{% load static %}
 {% block content %}
 
 <!DOCTYPE html>
@@ -130,6 +130,36 @@
             <p>
                 Pan-Pan Little Shop by Alexander William Lim - 2306207505 - PBP F
             </p>
+        </div>
+        <div>
+            {% if not products %}
+            <p>Belum ada data product pada Pan-Pan Little Shop.</p>
+            {% else %}
+            <table>
+            <tr>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Description</th>
+                <th>Stock</th>
+            </tr>
+
+            {% for product in products %}
+            <tr>
+                <td>{{product.name}}</td>
+                <td>{{product.price}}</td>
+                <td>{{product.description}}</td>
+                <td>{{product.stock}}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% endif %}
+
+        <br />
+
+        <a href="{% url 'main:add_product' %}">
+        <button>Add Product</button>
+        </a>
+        {% endblock content %}
         </div>
     </body>
 </html>
