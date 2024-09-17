@@ -2,6 +2,12 @@
 {% load static %}
 {% block content %}
 
+
+{% block meta %}
+    <title>Pan-Pan Little Shop</title>
+    <link rel="stylesheet" href="{% static 'main.css' %}">
+{% endblock meta %}
+
 <body>
   <div class="top-bar">
     <img src="{% static '/assets/logo/icon_horizontal.png' %}" alt="Panda Icon">
