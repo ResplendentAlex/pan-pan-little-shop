@@ -31,6 +31,124 @@ This project is licensed under the MIT License - refer to the LICENSE file for m
 **NPM** : 2306207505 <br>
 **Class** : PBP F
 
+## **TUGAS 3**<br>
+### **Step-by-Step Form Setup and Data Delivery Implementation*<br>
+
+**A. Konfigurasi Form**
+1. Buatlah sebuah class dengan nama `ProductForm` dalam sebuah berkas baru bernama `forms.py`. Form ini akan digunakan untuk menambahkan produk pada app `main`. Isilah class tersebut sebagai berikut:
+```python
+class ProductForm(ModelForm):
+    class Meta:
+        model = Product
+        fields = ['name', 'price', 'description', 'stock']
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Product Name'}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Product Description'}),
+            'price': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Product Price'}),
+            'stock': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Stock Quantity'}),
+        }
+```
+
+2. Form tersebut nantinya akan ditampilkan saat user melakukan request. Request tersebut akan di proses oleh sebuah fungsi di `views.py` yang seperti berikut:
+```python
+def add_product(request):
+    form = ProductForm(request.POST or None)
+
+    if form.is_valid() and request.method == "POST":
+        form.save()
+        return redirect("main:show_main")
+
+    context = {'form': form}
+    return render(request, "add_product.html", context)
+```
+
+**B. Implementasi Data Delivery**
+1. Pada `views.py`, tambahkan 4 fungsi baru untuk memroses data yang ada pada database sehingga dapat ditampilkan dalam bentuk json ataupun xml. 
+
+Dua fungsi pertama digunakan untuk menampilkan semua produk masing-masing dalam format json dan xml, dua fungsi lainnya digunakan untuk menampilkan produk sesuai id terpilih dalam format json atau xml.
+
+- `show_xml()`:
+
+```python
+def show_xml(request):
+    data = Product.objects.all()
+    return HttpResponse(serializers.serialize("xml", data), content_type="application/xml")
+```
+
+- `show_json()`
+
+```python
+def show_json(request):
+    data = Product.objects.all()
+    return HttpResponse(serializers.serialize("json", data), content_type="application/json")
+```
+
+- `show_xml_by_id()`:
+```python
+def show_xml_by_id(request, id):
+    data = Product.objects.filter(pk=id)
+    return HttpResponse(serializers.serialize("xml", data), content_type="application/xml")
+
+```
+
+- `show_json_by_id()`:
+```python
+def show_json_by_id(request, id):
+    data = Product.objects.filter(pk=id)
+    return HttpResponse(serializers.serialize("json", data), content_type="application/json")
+```
+
+2. Setelah menambahkan fungsi-fungsi tersebut pada `views.py`, routing URL untuk setiap **views** juga harus ditambahkan pada berkas `urls.py` dalam direktori main.
+
+```python
+...
+urlpatterns = [
+    path('', show_main, name='show_main'),
+    path('add/', add_product, name='add_product'),
+    path('xml/', show_xml, name='show_xml'),
+    path('json/', show_json, name='show_json'),
+    path('xml/<str:id>/', show_xml_by_id, name='show_xml_by_id'),
+    path('json/<str:id>/', show_json_by_id, name='show_json_by_id'),
+]
+...
+```
+
+### Mengapa sebuah platform perlu memiliki *data delivery*?
+
+*Data delivery* diperlukan oleh sebuah platform karena beberapa alasan. Berikut adalah beberapa alasan utama mengapa sebuah plaform membutuhkan *data delivery* yang baik:
+1. Memungkinkan pengguna atau aplikasi lain untuk menerima data secara *real-time*. 
+2. Memungkinkan kontrol lebih baik terhadap siapa yang dapat mengakses data serta distribusi daripada data tersebut, sehingga risiko keamanan dan kebocoran data dapat dikurangi.
+3. Waktu respons dari platform dapat menjadi lebih cepat sehingga meningkatkan kepuasan dan produktivitas pengguna.
+
+### XML vs JSON
+
+Dalam konteks aplikasi modern, menurut saya JSON lebih baik daripada XML oleh karena beberapa alasan. 
+1. JSON lebih mudah dibaca daripada XML karena menggunakan kurung kerawal `{}` yang diisi dengan data yang ingin ditampilkan, sementara XML menggunakan tags.
+2. JSON juga lebih `lightweight` dalam performa penyimpanan. Ini karena JSON tidak perlu menggunakan tags pembuka dan penutup berlebihan untuk menampilkan data. 
+3. JSON juga sudah secara alami terintegrasi dengan JavaScript sehingga dapat lebih mudah untuk diparse menjadi sebuah objek JavaScript tanpa melakukan banyak konversi.
+
+### Fungsi `is_valid()` pada form Django
+
+Fungsi `is_valid()`, sesuai namanya, merupakan sebuah fungsi yang dipanggil untuk melakukan validasi data yang di masukkan oleh user. Data type yang valid ditentukan sebelumnya pada `models.py` dari objek yang ingin dibuat.
+
+Fungsi `is_valid()` mengembalikan sebuah nilai dengan data type `boolean`. Jika data yang dimasukkan sesuai dengan models yang telah ditentukan, maka fungsi akan mengembalikan nilai `True`, dan `False` bila sebaliknya. Ini dapat kita gunakan sebagai condition pada conditionals ataupun looping sampai user memasukkan sebuah nilai input yang sesuai.
+
+### Pentingnya `csrf_token` saat membuat form di Django
+
+`csrf_token` merupakan sebuah token yang digunakan untuk melindungi aplikasi dari salah satu serangan kemanan, **CSRF** (Cross-Site Request Forgery), yang melakukan penargetan pada aplikasi web dengan mengirimkan permintaan palsu dari sumber yang tidak sah.
+
+`csrf_token` ini juga bersifat unik, sehingga sangat sulit ditebak oleh penyerang. `csrf_token` ini akan disertakan dalam sebuah form setiap use mengakses atau membuka form. Saat melakukan pengiriman form, token ini akan diverifikasi dan dicek apakah sesuai untuk mengecek apakah berasal dari pengguna yang sah.
+
+### Hasil akses data URL dari Postman
+1. Semua produk dalam XML
+![SS Bukti](assets/assignments/xml.png)
+2. Semua produk dalam JSON
+![SS Bukti](assets/assignments/json.png)
+3. Produk tertentu dalam XML
+![SS Bukti](assets/assignments/xml_by_id.png)
+4. Produk tertentu dalam JSON
+![SS Bukti](assets/assignments/json_by_id.png)
+
 ## **TUGAS 2**<br>
 ### **Step-by-Step Project Setup Guide** <br>
 
