@@ -14,12 +14,15 @@
             <button>Logout</button>
         </a>
     </div>
-    <div class = "main-content">
+    <div class="welcome-msg">
+        <p>Welcome back {{ name }}, what would you like to do today?</p>
+    </div>
+    <div class="main-content">
         <div class="container">
-        {% if not products %}
-            <p>No product currently available in Pan-Pan Little Shop.</p>
-        {% else %}
-            {% for product in products %}
+            {% if not products %}
+                <p>No product currently available in Pan-Pan Little Shop.</p>
+            {% else %}
+                {% for product in products %}
                     <div class="cards">
                         <img src="{% static '/assets/logo/panda_icon.png' %}" alt="Product 1">
                         <div class="product-description">
@@ -34,23 +37,25 @@
                             </p>      
                             <p style="font-weight: 50%; font-size: 12px">
                                 Remaining Stock: {{ product.stock }}
+                            </p>
                         </div>
                     </div>
-            {% endfor %}
-        {% endif %}
+                {% endfor %}
+            {% endif %}
         </div>
-        <div class="add-button">
-            <a href="{% url 'main:add_product' %}">
-                <button>Add Product</button>
-            </a>
     </div>
-    <div class="user-info">
-        <h5>Sesi terakhir login: {{ last_login }}</h5>
-    </div>  
-    <div class="footer">
-        <p>
-            Pan-Pan Little Shop by Alexander William Lim - 2306207505 - PBP F
-        </p>
+    <div class="add-container">
+        <a href="{% url 'main:add_product' %}">
+            <button>Add Product</button>
+        </a>
+    </div>
+    <div class="wrapper">
+        <div class="footer">
+            <p>Last Login Session: {{ last_login }}<p></p>
+            <p>
+                Pan-Pan Little Shop by Alexander William Lim - 2306207505 - PBP F
+            </p>
+        </div>
     </div>
 </body>
 {% endblock content %}
