@@ -12,7 +12,7 @@ import datetime
 
 @login_required(login_url='main:login')
 def show_main(request):
-    products = Product.objects.all()
+    products = Product.objects.filter(user=request.user)
 
     context = {
         'name' : request.user.username,
@@ -29,9 +29,9 @@ def add_product(request):
     form = ProductForm(request.POST or None)
 
     if form.is_valid() and request.method == "POST":
-        mood_entry = form.save(commit=False)
-        mood_entry.user = request.user
-        mood_entry.save()
+        product = form.save(commit=False)
+        product.user = request.user
+        product.save()
         return redirect('main:show_main')
 
     context = {'form': form}
@@ -66,20 +66,20 @@ def register(request):
     return render(request, 'register.html', context)
 
 def login_user(request):
-   if request.method == 'POST':
-      form = AuthenticationForm(data=request.POST)
+    if request.method == 'POST':
+        form = AuthenticationForm(data=request.POST)
 
-      if form.is_valid():
+        if form.is_valid():
             user = form.get_user()
             login(request, user)
             response = HttpResponseRedirect(reverse("main:show_main"))
             response.set_cookie('last_login', str(datetime.datetime.now()))
             return response
 
-   else:
-      form = AuthenticationForm(request)
-   context = {'form': form}
-   return render(request, 'login.html', context)
+    else:
+        form = AuthenticationForm(request)
+    context = {'form': form}
+    return render(request, 'login.html', context)
 
 def logout_user(request):
     logout(request)
