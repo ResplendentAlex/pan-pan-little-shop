@@ -71,16 +71,9 @@ body {
     max-width: 20%;
 }
 
-.top-bar p {
-    color: white;
-    font-family: 'Helvetica', sans-serif;
-    font-size: 20px;
-    margin: 0;
-}
-
 .top-bar button {
-    background-color: rgb(47, 47, 47);
-    color: white;
+    background-color: rgb(191, 99, 99);
+    color: black;
     font-family: 'Helvetica', sans-serif;
     padding: 10px;
     font-size: 20px;

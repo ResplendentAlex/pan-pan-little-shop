@@ -1,16 +1,18 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block content %}
 
 {% block meta %}
     <title>Pan-Pan Little Shop</title>
     <link rel="stylesheet" href="{% static 'main.css' %}">
 {% endblock meta %}
 
+{% block content %}
 <body>
     <div class="top-bar">
         <img src="{% static '/assets/logo/icon_horizontal.png' %}" alt="Panda Icon">
-        <a href="{% url 'main:add_product' %}"><button>Add Product</button></a>
+        <a href="{% url 'main:logout' %}">
+            <button>Logout</button>
+        </a>
     </div>
     <div class = "main-content">
         <div class="container">
@@ -37,11 +39,12 @@
             {% endfor %}
         {% endif %}
         </div>
+        <div class="add-button">
+            <a href="{% url 'main:add_product' %}">
+                <button>Add Product</button>
+            </a>
     </div>
-    <div>
-        <a href="{% url 'main:logout' %}">
-            <button>Logout</button>
-        </a>
+    <div class="user-info">
         <h5>Sesi terakhir login: {{ last_login }}</h5>
     </div>  
     <div class="footer">
