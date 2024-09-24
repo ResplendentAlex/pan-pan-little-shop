@@ -38,6 +38,12 @@
         {% endif %}
         </div>
     </div>
+    <div>
+        <a href="{% url 'main:logout' %}">
+            <button>Logout</button>
+        </a>
+        <h5>Sesi terakhir login: {{ last_login }}</h5>
+    </div>  
     <div class="footer">
         <p>
             Pan-Pan Little Shop by Alexander William Lim - 2306207505 - PBP F
