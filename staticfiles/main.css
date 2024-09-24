@@ -4,18 +4,51 @@ body {
     background-color: rgb(71, 76, 83);
 }
 
+
+/* wrapper for footer */
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+}
+
+
+/* footer */
+.footer {
+    display:flex;
+    justify-content: space-between;
+    font-family: 'Helvetica', sans-serif;
+    font-weight: 600;
+    font-size: 12px;
+    text-align: center;
+    padding: 20px 20px 0;
+    color: #fff;
+}
+
+.welcome-msg {
+    font-family: 'Helvetica', sans-serif;
+    max-width: 30%;
+    font-size: 24px;
+    color: white;
+    margin-top: 20px;
+    margin-left: 25px;
+}
+
+/* main body content */
 .main-content {
     display: flex;
     justify-content: center;
     width: 100%;
-    flex: 1;
+    flex: 1;    
 }
 
 .container {
     display: grid;
+    justify-items: center;
     grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
     gap: 20px;
-    padding-top: 20px;
+    padding-top: 5px;
+    margin: 0 20px 0 20px;
     width: 100%;
 }
 
@@ -25,6 +58,7 @@ body {
     align-items: center;
     gap: 5px;
     background-color: white;
+    width: fit-content;
     border-radius: 16px;
     padding: 10px;
     margin: 5px;
@@ -58,6 +92,35 @@ body {
     margin: 5px 0;
 }
 
+
+/* add_product button */
+.add-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 20px;
+}
+
+.add-container button {
+    background-color: alabaster;
+    color: rgb(47, 47, 47);
+    font-family: 'Helvetica', sans-serif;
+    padding: 10px;
+    font-size: 20px;
+    border-radius: 16px;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.add-container button:hover {
+    transform: scale(1.05);
+    background-color: white;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* top bar */
 .top-bar {
     display: flex;
     justify-content: space-between;
@@ -72,8 +135,8 @@ body {
 }
 
 .top-bar button {
-    background-color: rgb(191, 99, 99);
-    color: black;
+    background-color: rgb(47, 47, 47);
+    color: white;
     font-family: 'Helvetica', sans-serif;
     padding: 10px;
     font-size: 20px;
@@ -89,22 +152,8 @@ body {
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
-.footer {
-    display: flex;
-    justify-content: center;
-    padding: 10px;
-    position: relative;
-    left: 0;
-    right: 0;
-    bottom: 0;
-}
 
-.footer p {
-    color: white;
-    font-family: 'Helvetica', sans-serif;
-    font-size: 14px;
-}
-
+/* add product form */
 .form-control {
     width: 100%;
     padding: 10px;

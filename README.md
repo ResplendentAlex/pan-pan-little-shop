@@ -31,8 +31,300 @@ This project is licensed under the MIT License - refer to the LICENSE file for m
 **NPM** : 2306207505 <br>
 **Class** : PBP F
 
+## **TUGAS 4**<br>
+### **Implementasi Step-by-Step Autentikasi, Session, dan Cookies**
+
+**A. Autentikasi**<br>
+1. Buka `views.py` dan tambahkan fungsi-fungsi `register`, `login_user`, dan `logout_user` sebagai berikut:
+
+- `register`:
+```python
+def register(request):
+    form = UserCreationForm()
+
+    if request.method == "POST":
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Your account has been successfully created!')
+            return redirect('main:login')
+    context = {'form':form}
+    return render(request, 'register.html', context)
+```
+
+- `login_user`:
+```python
+def login_user(request):
+   if request.method == 'POST':
+      form = AuthenticationForm(data=request.POST)
+
+      if form.is_valid():
+            user = form.get_user()
+            login(request, user)
+            return redirect('main:show_main')
+
+   else:
+      form = AuthenticationForm(request)
+   context = {'form': form}
+   return render(request, 'login.html', context)
+```
+
+- `logout_user`:
+```python
+def logout_user(request):
+    logout(request)
+    return redirect('main:login')
+```
+
+
+2. Jangan lupa pula untuk menambahkan kode `import` yang sesuai seperti ini:
+```python
+from main.views import register
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth import authenticate, login, logout
+```
+
+3. Setelah memasukkan semua fungsi `views.py`, mulailah merancang tampilan `html` dari login page dan register page. Masukkan kedua berkas tersebut ke dalam direktori `templates/`. Contohnya adalah sebagai berikut:
+
+- `login.html`
+```python
+{% extends 'base.html' %}
+
+{% block meta %}
+<title>Pan-Pan Little Shop</title>
+{% endblock meta %}
+
+{% block content %}
+<div class="login">
+  <h1>Login</h1>
+
+  <form method="POST" action="">
+    {% csrf_token %}
+    <table>
+      {{ form.as_table }}
+      <tr>
+        <td></td>
+        <td><input class="btn login_btn" type="submit" value="Login" /></td>
+      </tr>
+    </table>
+  </form>
+
+  {% if messages %}
+  <ul>
+    {% for message in messages %}
+    <li>{{ message }}</li>
+    {% endfor %}
+  </ul>
+  {% endif %} Don't have an account yet?
+  <a href="{% url 'main:register' %}">Register Now</a>
+</div>
+
+{% endblock content %}
+```
+
+- `register.html`
+```html
+{% block content %}
+
+<div class="login">
+  <h1>Register</h1>
+
+  <form method="POST">
+    {% csrf_token %}
+    <table>
+      {{ form.as_table }}
+      <tr>
+        <td></td>
+        <td><input type="submit" name="submit" value="Daftar" /></td>
+      </tr>
+    </table>
+  </form>
+
+  {% if messages %}
+  <ul>
+    {% for message in messages %}
+    <li>{{ message }}</li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+</div>
+
+{% endblock content %}
+- `register.html`
+```
+
+
+4. Sesuaikan `main.html` agar dapat melakukan logout dengan menekan sebuah tombol. Contohnya bisa seperti ini:
+```html
+...
+<a href="{% url 'main:logout' %}">
+    <button>Logout</button>
+</a>
+...
+```
+
+5. Pada berkas `urls.py`, jangan lupa untuk menambahkan `import` code untuk setiap fungsi yang telah dimasukkan ke dalam `views.py` seperti berikut ini:
+```python
+...
+from main.views import register, login_user, logout_user
+```
+
+6. Tambahkan pula *path urls* ke dalam `urls.py` sehingga pemroses *routing* dapat berjalan dengan baik. Contohnya adalah sebagai berikut:
+```python
+...
+path('register/', register, name='register'),
+path('login/', login_user, name='login'),
+path('logout/', logout_user, name='logout'),
+```
+
+**B. Pembuatan Akun Pengguna dengan Dummy Data**
+1. Buka aplikasi web pada http://localhost:8000
+
+2. Pencet `Register Now` pada tampilan login, dan daftarkan akun dengan memasukkan input pada field yang tersedia sesuai dengan ketentuan yang telah diberikan. Lalu pencet daftar
+
+3. Ulangi step 2 untuk pengguna lainnya.
+
+4. Login dengan akun yang telah dibuat, lalu pencet *button* `Add Product`.
+![Home](assets/assignments/home.png)
+
+5. Anda akan dialihkan kepada tampilan baru sebagai berikut:
+![Add Product](assets/assignments/add_product.png)
+
+6. Masukkan input sesuai ketentuan field, dan pencet tombol `Add Product`.
+
+7. Lakukan ini tiga kali sampai mendapatkan 3 dummy data.
+
+8. Logout dan lakukan step 4-7 untuk akun lainnya, sehingga tampilan akhir main untuk kedua akun akan terlihat seperti ini:
+![Dummy Home 1](assets/assignments/dummy_home1.png)
+![Dummy Home 2](assets/assignments/dummy_home2.png)
+
+<br>
+
+**C. Menghubungkan User dengan Product**
+1. Buka `models.py` dan tambahkan *Foreign Key* `User` pada badan `Product` seperti ini:
+```python
+from django.db import models
+from django.contrib.auth.models import User
+import uuid
+
+class Product(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(max_length=255)
+    price = models.IntegerField()
+    description = models.TextField()
+    stock = models.IntegerField()
+
+    @property
+    def is_product_available(self):
+        return self.stock > 0
+``` 
+2. Jangan lupa untuk melakukan *command* di bawah ini setelah melakukan perubahan terhadap `models.py`:
+```shell
+python manage.py makemigrations
+python manage.py migrate
+```
+
+3. Pada fungsi `login_user` yang terdapat di dalam `views.py`, pastikan detail user berupa last_login disimpan sebagai sebuah *session cookie*.
+```python
+...
+import datetime
+
+def login_user():
+    ...
+    if form.is_valid():
+            user = form.get_user()
+            login(request, user)
+            response = HttpResponseRedirect(reverse("main:show_main"))
+            response.set_cookie('last_login', str(datetime.datetime.now()))
+            return response
+    ...
+```
+
+4. Simpan `last_login` sebagai sebuah context pada `show_main`
+```python
+def show_main():
+    ...
+    context = {
+        'name' : request.user.username,
+        'price': 'Rp. 200.000',
+        'stock': '10',
+        'description': 'A self portrait of Pan-Pan, the panda.',
+        'products': products,
+        'last_login': request.COOKIES['last_login'],
+    }
+    ...
+```
+
+5. Pada `main.html` tambahkan beberapa bagian untuk menampilkan detail user seperti `username` dan `last_login`. Salah satu contoh adalah sebagai berikut:
+```html
+...
+<div class="welcome-msg">
+        <p>Welcome back {{ name }}, what would you like to do today?</p>
+</div>
+...
+<div class="wrapper">
+    <div class="footer">
+        <p>Last Login Session: {{ last_login }}<p></p>
+        <p>
+            Pan-Pan Little Shop by Alexander William Lim - 2306207505 - PBP F
+        </p>
+    </div>
+</div>
+...
+```
+
+### Perbedaan `HttpResponseRedirect()` dan `redirect()`<br>
+Inti dari kedua fungsi tersebut sebenarnya sama, yaitu untuk mengalihkan pengguna ke suatu URL yang telah terdaftar pada urls.py. Namun, ada beberapa perbedaan dalam cara kerja kedua fungsi:
+
+1. `HttpResponseRedirect()`<br>
+Fungsi ini adalah sebuah fungsi yang menerima URL lengkap atau relatif sebagai argumen. Argumen tersebut nantinya akan diterima sehingga aplikasi web dapat membuat sebuah request sehingga user dapat diarahkan menuju URL tersebut. Namun, fungsi ini tidak dapat menerima fungsi `views.py` lain dan hanya menerima URL.
+
+2. `redirect()`<br>
+Perbedaan fungsi ini dengan fungsi `HttpRepsponseRedirect()` adalah fleksibilitasnya. Ini karena fungsi tersebut memiliki kemampuan untuk menerima berbagai jenis argumen, seperti URL, nama tampilan (nama fungsi pada views.py), dan bahkan objek model yang nantinya akan di proses oleh fungsi dan dikembalikan sebagai `HttpResponseRedirect`.<br><br>
+
+Lalu, pada kasus apa saja keduanya sebaiknya digunakan? Untuk `HttpResponseRedirect()`, kita tahu bahwa parameter yang diterima merupakan sebuah tipe data berupa URL. Oleh karena itu, biasanya fungsi tersebut akan lebih sering digunakan pada **pengalihan dasar** yang tidak memerlukan *programming logic* yang berat. Selain itu, fungsi tersebut juga lebih sering digunakan pada ***external redirect*** atau pengalihan ke website ataupun aplikasi di luar domain yang sekarang user berada.<br><br>
+
+Sementara itu, fungsi `redirect()` lebih sering digunakan pada kasus-kasus dimana fleksibilitas dangat dibutuhkan, seperti saat kita ingin memiliki parameter berupa **URL bernama**, **URL dengan parameter (filter)**, **fungsi views**, dan **URL terasosiasi dengan objek model**. Tentunya, kita tetap masih bisa menggunakan fungsi ini untuk mengalihkan user ke suatu URL tertentu seperti pada implementasi `HttpResponseRedirect`. 
+
+### **Cara kerja penghubungan model Product dengan User**<br>
+Secara konseptual, penghubungan model suatu objek dengan *entity* lain dilakukan dengan memberikan atau menaruh sebuah ***Foreign Key*** pada model objek. Pada konteks Tugas 4, sebuah ***Foreign Key*** berupa `User` akan di-*assign* kepada model `Product`.
+
+Implementasinya secara pemrograman adalah sebagai berikut:
+```python
+from django.contrib.auth.models import User
+
+class Product(models.Model): 
+    # Other attribute...
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    # Other attribute...
+```
+Pada potongan kode di atas, ada beberapa bagian yang perlu diperhatikan. Yang pertama adalah penambahan field `user` yang mengandung ***Foreign Key*** yang terdiri dari sebuah entitas `User` dan parameter lainnya. Yang kedua adalah bagaiman opsi `on_delete=models.CASCADE` akan berpengaruh terhadap logic web kita. Kegunaan potongan kode tersebut secara garis besar hanyalah untuk menghapus semua hal yang terkait dengan `user`, saat entitas atau object yang telah disimpan di database terakit dengan `user` dihapus. Ini merupakan sebuah aksi pencegahan agar tidak adanya entri produk yang tidak memiliki pemilik.
+
+### ***Authentication*** vs ***Authorization***<br>
+Walaupun keduanya terdengar mirip, faktanya adalah bahwa kedua term tersebut sangatlah berbeda. Ini karena masing-masing dari proses tersebut memiliki tugas masing-masing yang penting dalam keamanan siber daripada suatu aplikasi web.<br>
+
+1. ***Authentication***<br>
+*Authentication* atau autentikasi adalah sebuah proses verifikasi identitas seorang user atau sistem. Ini meyakinkan bahwa entitas yang berusahan untuk mengakses suatu sistem adalah benar mereka sendiri. Sebuah contoh yang sering kita lihat adalah bagaimana banyak sekali aplikasi meminta ***credentials*** para pengguna sebelum bisa mengakses aplikasi ataupun tampilan utama daripada aplikasinya. Ini dapat berupa *username* dan *password*, ataupun data biometris seperti sidik jari.
+
+2. ***Authorization***<br>
+*Authorization* ataua otorisasi adalah sebuah proses penentuan apa yang boleh dilakukan dan diakses oleh pengguna yang telah terverifikasi. Proses ini mengontrol akses kepada *resources* dan aksi-aksi tergantung tingkatan izin dari penggunannya. Implementasi otorisasi dapat dilihat dengan bagaimana beberapa laman webpage tidak dapat diakses jika tidak memiliki izin tertentu sehingga pengguna tidak akan bisa melihatnya ataupun mengubahnya. Ini juga dapat dilihat dengan bagaimana pengguna web tidak bisa mengubah elemen-elemen yang terlampir pada halamannya jika bukan merupakan *website administrator*
+
+### **Bagaimana Django mengingat user yang pernah login?**<br>
+Pada pengembangan program berbasis platform, ada dua hal yang perlu diingat, yaitu ***session*** dan ***cookies***. Kedua hal itu lah yang digunakan oleh sebuah perangkat lunak untuk dapat mengingat user yang pernah masuk dan terverifikasi oleh aplikasi web tersebut. 
+
+*Session* digunakan oleh Django untuk menyimpan informasi mengenai user pada server. Setiap kali user login dan diverifikasi, Django akan membuat sebuah entri sesi baru yang akan disimpan di dalam *database* ataupun di *backend* sesi yang telah dikonfigurasi. Sementara itu, *cookie* merupakan sebuah ID sesi yang diberikan kepada pengguna setiap kali sebuah entri sesi baru dibuat oleh Django. ID sesi ini akan disimpan di dalam browser user dan dikirim kembali kepada server setiap kali user melakukan sebuah *request* sehingga user tidak perlu melakukan login lagi untuk setiap permintaan yang dilakukan.
+
+### ***Cookies* dan tingkat keamanannya**<br>
+Tentunya kegunaan *cookies* tidak berhenti sampai pada mengingat login session user, tetapi juga digunakan pada beragam hal lainnya, seperti penyimpanan preferensi pengguna, pelacakan aktivitas pengguna, personalisasi konten, dan juga keranjang belanja pada aplikasi *e-commerce*.<br><br>
+Walaupun kegunaan *cookies* sangat beragam, ini juga meningkatkan adanya potensi kelemahan suatu aplikasi web melalui *cookies* tersebut. Ini dapat terjadi bila misalnya tidak ada pengolahan *cookies* yang baik dari pengembang aplikasi web sehingga para penyerang siber dapat menggunakan kelemahan tersebut untuk mengambil ataupun membocorkan data. Beberapa contoh akibat kelalaian adalah sebagai berikut:
+1. Cross-Site Request Forgery (CSRF) - sebuah jenis serangan di mana penyerang melakukan pemaksaaan pada pengguna terautentikasi sehingga mereka dapat mengirimkan permintaan tidak diinginkan ke aplikasi web yang mereka terautentikasi. Ini dapat merugikan pengguna seperti adanya perubahan data ataupun transaksi tidak sah.
+
+2. Cross-Site Scripting (XSS) - sebuah jenis serangan di mana penyeran melakukan penyuntikan skrip berbahaya ke dalam halaman web yang sedang diakses oleh pengguna lain. Serangan ini nantinya dapat digunakan oleh penyerang untuk mencuri informasi sensitif, seperti *session cookie*, ataupun mengubah tampilan web.
+
+
 ## **TUGAS 3**<br>
-### **Step-by-Step Form Setup and Data Delivery Implementation*<br>
+### **Step-by-Step Form Setup and Data Delivery Implementation**<br>
 
 **A. Konfigurasi Form**
 1. Buatlah sebuah class dengan nama `ProductForm` dalam sebuah berkas baru bernama `forms.py`. Form ini akan digunakan untuk menambahkan produk pada app `main`. Isilah class tersebut sebagai berikut:
