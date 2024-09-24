@@ -15,7 +15,7 @@ def show_main(request):
     products = Product.objects.all()
 
     context = {
-        'name' : 'Pan-Pan Self Portrait',
+        'name' : request.user.username,
         'price': 'Rp. 200.000',
         'stock': '10',
         'description': 'A self portrait of Pan-Pan, the panda.',
@@ -29,8 +29,10 @@ def add_product(request):
     form = ProductForm(request.POST or None)
 
     if form.is_valid() and request.method == "POST":
-        form.save()
-        return redirect("main:show_main")
+        mood_entry = form.save(commit=False)
+        mood_entry.user = request.user
+        mood_entry.save()
+        return redirect('main:show_main')
 
     context = {'form': form}
     return render(request, "add_product.html", context)
