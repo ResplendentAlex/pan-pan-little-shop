@@ -1,0 +1,26 @@
+{% extends 'base.html' %} 
+{% load static %}
+{% block content %}
+
+<body>
+  <div class="top-bar">
+    <img src="{% static '/assets/logo/icon_horizontal.png' %}" alt="Panda Icon">
+  </div>
+
+  <div>
+    <form class="add-product-form" method="POST">
+      {% csrf_token %}
+      <table>
+        {{ form.as_table }}
+        <tr>
+          <td></td>
+          <td>
+            <input type="submit" value="Submit" class="btn btn-primary"/>
+          </td>
+        </tr>
+      </table>
+    </form>
+  </div>
+</body>
+
+{% endblock %}

@@ -31,6 +31,265 @@ This project is licensed under the MIT License - refer to the LICENSE file for m
 **NPM** : 2306207505 <br>
 **Class** : PBP F
 
+## **TUGAS 5**<br>
+### **Implementasi Step-by-Step Styling pada Project**
+1. Buatlah sebuah direktori pada root bernama `templates/css` dan masukkan sebuah file baru bernama `global.css`
+
+2. Isi `global.css` untuk memasukkan custom styling yang belum didefinisikan oleh Tailwind CSS.
+
+3. Pada `base.html`, masukkan beberapa lines sehingga akan terlihat seperti ini:
+```html
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    {% block meta %} {% endblock meta %}
+    <link rel="stylesheet" href="{% static 'css/global.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="icon" type="image/png" href="{% static 'assets/logo/icon.png' %}">
+    <script src="https://cdn.tailwindcss.com/"></script>
+  </head>
+  <body>
+    {% block content %} {% endblock content %}
+  </body>
+</html>
+```
+
+4. Pada direktori yang sama, tambahkan juga sebuah file bernama `navbar.html`. Contoh isi dari file tersebut adalah sebagai berikut:
+```html
+{% load static %}
+
+<nav class="bg-zinc-600 shadow-lg fixed top-0 left-0 z-40 w-screen">
+    <div class="max-w-full ml-4 mr-6">
+      <div class="flex flex-row justify-between h-16">
+        <div class="flex items-center">
+          <img src="{% static '/assets/logo/icon_horizontal.png' %}" alt="Panda Icon" class="max-h-16 max-w">
+          <a href="{% url 'main:show_main' %}" class="text-center text-white font-bold py-2 px-4 rounded-lg transition duration-300 ml-2">
+            Home
+          </a>
+          <a href="{% url 'main:show_json' %}" class="text-center text-white font-bold py-2 px-4 rounded-lg transition duration-300 ml-2">
+            Products
+          </a>
+          <a href="{% url 'main:show_main' %}" class="text-center text-white font-bold py-2 px-4 rounded-lg transition duration-300 ml-2">
+            Categories
+          </a>
+          <a href="{% url 'main:show_main' %}" class="text-center text-white font-bold py-2 px-4 rounded-lg transition duration-300 ml-2">
+            About
+          </a>
+        </div>
+        <div class="hidden md:flex items-center">
+          {% if user.is_authenticated %}
+            <a href="{% url 'main:logout' %}" class="text-center bg-stone-800 hover:bg-stone-900 text-white font-bold py-2 px-4 rounded-lg transition duration-300">
+              Logout
+            </a>
+          {% else %}
+            <a href="{% url 'main:login' %}" class="text-center bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300 mr-2">
+              Login
+            </a>
+            <a href="{% url 'main:register' %}" class="text-center bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300">
+              Register
+            </a>
+          {% endif %}
+        </div>
+        <div class="md:hidden flex items-center">
+          <button class="mobile-menu-button">
+            <svg class="w-6 h-6 text-white" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor">
+              <path d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- Mobile menu -->
+    <div class="mobile-menu hidden md:hidden  px-4 w-full md:max-w-full">
+      <div class="pt-2 pb-3 space-y-1 mx-auto">
+        {% if user.is_authenticated %}
+          <span class="block text-gray-300 px-3 py-2">Welcome, {{ user.username }}</span>
+          <a href="{% url 'main:logout' %}" class="block text-center bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300">
+            Logout
+          </a>
+        {% else %}
+          <a href="{% url 'main:login' %}" class="block text-center bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300 mb-2">
+            Login
+          </a>
+          <a href="{% url 'main:register' %}" class="block text-center bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lgtransition duration-300">
+            Register
+          </a>
+        {% endif %}
+      </div>
+    </div>
+    <script>
+      const btn = document.querySelector("button.mobile-menu-button");
+      const menu = document.querySelector(".mobile-menu");
+    
+      btn.addEventListener("click", () => {
+        menu.classList.toggle("hidden");
+      });
+    </script>
+  </nav>
+```
+
+5. Karena kita telah menambahkan Tailwind CSS ke dalam proyek yang sedang dikerjakan, kita bisa menggunakannya untuk melakukan *inline-styling*.
+
+6. Pada `register.html`, `login.html`, dan `add_product.html`, gunakan *inline-styling* untuk melakukan kustomisasi pada tampilan-tampilan tersebut agar lebih enak dilihat. Ini dilakukan sesuai keinginan masing-masing
+
+7. Pada `main.html`, kita juga menggunakan *inline-styling* tetapi dengan tambahan `navbar.html` yang telah kita buat. Kita dapat menampilkan `navbar.html` pada tampilan `main` dengan menggunakan tag `{% include `navbar.html` %}`
+
+8. Pada `main.html`, jangan lupa juga untuk memasukkan *button-button* yang akan ditekan oleh user untuk melakukan *logout* dan *add product*.
+
+9. Lakukan juga styling untuk menampilkan kartu serta opsi untuk menghapus dan mengedit produk kita.
+
+10. Untuk fitur *edit* dan *delete*, seperti minggu-minggu sebelumnya, kita pertama harus menambahkan kedua fungsi tersebut pada `views.py` seperti berikut:
+```python
+...
+
+# Fungsi-fungsi lainnya
+
+def edit_product(request, id):
+    # Get the product based on product ID
+    product = Product.objects.get(pk=id)
+
+    # Set product as an instance of form
+    form = ProductForm(request.POST or None, instance=product)
+
+    if form.is_valid() and request.method == "POST":
+        # Save form and return to main page
+        form.save()
+        return redirect('main:show_main')
+    
+    context = {'form': form}
+    return render(request, "edit_product.html", context)
+
+def delete_product(request, id):
+    # Get Product based on product ID
+    product = Product.objects.get(pk=id)
+
+    # Delete the product
+    product.delete()
+
+    # Return to main page
+    return HttpResponseRedirect(reverse('main:show_main'))
+```
+
+11. Setelah membuat fitur, kita harus melakukan routing agar fungsi yang kita gunakan dapat ditampilkan dan digunakan oleh pengguna aplikasi. Kita dapat melakukan ini dengan melakukan *import* dan menambahkan *path* url untuk fungsi tersebut sebagai berikut:
+```python
+...
+
+urlpatterns = [
+    ...
+    path('edit/<uuid:id>/', edit_product, name='edit_product'),
+    path('delete/<uuid:id>/', delete_product, name='delete_product'),
+]
+```
+
+12. Setelah itu, kita juga harus ingat untuk melakuan *styling* yang *responsive* dengan menambahkan kustomisasi berbeda untuk media yang berbeda. Ini dapat dilakukan menggunakan *styling* yang terpisah namun disembunyikan bila ketentuan tertentu dipenuhi (misalnya bila layar pengguna lebih besar dari suatu size tertentu, maka hide tampilan untuk layar yang lebih kecil).
+
+### **Mengapa responsive design menjadi konsep yang penting dalam pengembangan aplikasi web?**
+Saat kita melakukan pengembangan aplikasi, kita tidak dapat memastikan bahwa pengguna yang mengakses dan menggunakan aplikasi web kita pasti akan menggunakan suatu layar dengan size tertentu. Oleh karena itu, kita harus melakukan *styling* yang berbeda agar dapat menutupi semua kemungkinan tersebut. Contohnya, bila kita hanya menggunakan layar laptop sebagai referensi kita, maka kemungkinan besar desain yang telah kita lakukan tidak akan terlihat semenarik ataupun benar pada layar yang lebih kecil seperti smartphone dan tablet.
+
+Sebuah contoh aplikasi web tanpa responsive design dapat dilihat dari sini:
+![os_phone](assets/assignments/osvlsm_phone.png)
+
+Padahal, pada layar yang lebih besar, tampilannya adalah seperti ini:
+![os](assets/assignments/osvlsm.png)
+
+Dari sini dapat kita lihat pentingnya *responsive design* saat melakukan pengembangan pada aplikasi web kita.
+
+### **Perbedaan margin, border, dan padding**
+**A. Margin**
+Margin adalah ruang diluar batas elemen. Ini digunakan untuk membuat jarak dari satu elemen ke elemen lainnya.
+
+Contoh implementasi external CSS adalah sebagai berikut:
+```css
+.example {
+    margin: 20px; /* Margin di semua sisi */
+    margin-top: 10px; /* Margin atas */
+    margin-right: 15px; /* Margin kanan */
+    margin-bottom: 10px; /* Margin bawah */
+    margin-left: 15px; /* Margin kiri */
+}
+```
+**B. Border**
+Border adalah garis yang mengelilingi elemen. Ini merupakan sebuah pembatas antara margin dan padding. Modifikasi dapat dilakukan secara keseluruhan atau hanya pada satu sisi.
+
+Contoh implementasinya adalah sebagai berikut:
+```css
+.example {
+    border: 2px solid black; /* Border di semua sisi */
+    border-top: 2px dashed red; /* Border atas */
+    border-right: 2px dotted green; /* Border kanan */
+    border-bottom: 2px solid blue; /* Border bawah */
+    border-left: 2px double yellow; /* Border kiri */
+}
+```
+
+**C. Padding**
+Padding merupakan ruang yang berada dalam elemen. Ini digunakan untuk membuat jarak antara isi atau konten elemen dengan pembatas elemen.
+
+Contoh implementasinya adalah sebagai berikut:
+```css
+.example {
+    padding: 20px; /* Padding di semua sisi */
+    padding-top: 10px; /* Padding atas */
+    padding-right: 15px; /* Padding kanan */
+    padding-bottom: 10px; /* Padding bawah */
+    padding-left: 15px; /* Padding kiri */
+}
+```
+
+### **Flex-box dan Grid layout**
+**A. Flex-box**
+Sebuah layout CSS yang dirancang untuk mengatur dan menyelaraskan item dalam sebuah container (misalnya div). Ini sangat berguna untuk membuat sebuah layout yang responsif dan fleksibel.
+
+Ada beberapa properti yang dapat dimiliki oleh flexbox, berikut adalah beberapa di antaranya:
+- `display: flex;`: Mengaktifkan flexbox pada container.
+- `flex-direction`: Menentukan arah sumbu utama.
+- `justify-content`: Menyelaraskan item sepanjang sumbu utama.
+- `align-items`: Menyelaraskan item sepanjang sumbi silang.
+
+Contoh implementasi:
+```css
+.container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.item {
+    flex: 1;
+    padding: 10px;
+}
+```
+
+**B. Grid Layout**
+Layout CSS yang dirancang untuk membuat layout dua dimensi yang lebih kompleks. Ini memudahkan kita untuk mengatur item ataupun elemen dalam baris dan kolom, serta memberikan kita kemampuan untuk memisahkan items dengan gap tertentu.
+
+Ada beberapa properti pada grid layout yang dapat digunakan:
+- `display: grid;`: Mengaktifkan grid layout pada container.
+- `grid-template-columns`: Menentukan jumlah dan ukuran kolom dalam grid.
+- `grid-template-rows`: Menentukan jumlah dan ukuran baris dalam grid.
+- `gap`: Menentukan jarak antar item dalam grid (row-gap, column-gap).
+
+Contoh implementasinya adalah sebagai berikut:
+```css
+.container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: auto;
+    gap: 10px;
+}
+
+.item {
+    padding: 10px;
+    background-color: lightgray;
+}
+```
+
 ## **TUGAS 4**<br>
 ### **Implementasi Step-by-Step Autentikasi, Session, dan Cookies**
 
@@ -593,7 +852,7 @@ Fungsi `is_valid()` mengembalikan sebuah nilai dengan data type `boolean`. Jika 
     ```
 
 ### **Bagan *Request Client* ke Django**<br>
-<img src="assets/logo/bagan.png"></img>
+<img src="assets/assignments/bagan.png"></img>
 
 ### **Fungsi Git**<br>
 Dalam sebuah pengembangan proyek perangkat lunak, `git` memainkan peran yang sangat penting serta menyediakan pengguna dengan beberapa fitur yang akan membantu dalam masa pengembangan. Beberapa diantaranya adalah:

@@ -1,32 +1,43 @@
-{% extends 'base.html' %} 
+{% extends 'base.html' %}
 {% load static %}
-{% block content %}
-
-
 {% block meta %}
-    <title>Pan-Pan Little Shop</title>
-    <link rel="stylesheet" href="{% static 'main.css' %}">
+<title>Add Product</title>
 {% endblock meta %}
 
-<body>
-  <div class="top-bar">
-    <img src="{% static '/assets/logo/icon_horizontal.png' %}" alt="Panda Icon">
-  </div>
+{% block content %}
+{% include 'navbar.html' %}
 
-  <div>
-    <form class="add-product-form" method="POST">
-      {% csrf_token %}
-      <table>
-        {{ form.as_table }}
-        <tr>
-          <td></td>
-          <td>
-            <input type="submit" value="Add Product" class="btn btn-primary"/>
-          </td>
-        </tr>
-      </table>
-    </form>
+<div class="flex flex-col min-h-screen bg-zinc-500">
+  <div class="container mx-auto px-4 py-8 mt-16 max-w-xl">
+    <h1 class="text-3xl font-bold text-center mb-8 text-black">Add New Product</h1>
+  
+    <div class="bg-stone-100 shadow-md rounded-lg p-6 form-style">
+      <form method="POST" class="space-y-6">
+        {% csrf_token %}
+        {% for field in form %}
+          <div class="flex flex-col">
+            <label for="{{ field.id_for_label }}" class="mb-2 font-semibold text-gray-700">
+              {{ field.label }}
+            </label>
+            <div class="w-full">
+              {{ field }}
+            </div>
+            {% if field.help_text %}
+              <p class="mt-1 text-sm text-gray-500">{{ field.help_text }}</p>
+            {% endif %}
+            {% for error in field.errors %}
+              <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+            {% endfor %}
+          </div>
+        {% endfor %}
+        <div class="flex justify-center mt-6">
+          <button type="submit" class="bg-stone-800 text-white font-semibold px-6 py-3 rounded-lg hover:bg-stone-900 transition duration-300 ease-in-out w-full">
+            Add Product
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
-</body>
+</div>
 
 {% endblock %}

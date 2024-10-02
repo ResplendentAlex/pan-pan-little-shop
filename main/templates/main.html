@@ -3,59 +3,67 @@
 
 {% block meta %}
     <title>Pan-Pan Little Shop</title>
-    <link rel="stylesheet" href="{% static 'main.css' %}">
 {% endblock meta %}
 
 {% block content %}
-<body>
-    <div class="top-bar">
-        <img src="{% static '/assets/logo/icon_horizontal.png' %}" alt="Panda Icon">
-        <a href="{% url 'main:logout' %}">
-            <button>Logout</button>
-        </a>
+{% include 'navbar.html' %}
+<div class="overflow-x-hidden bg-zinc-500 pt-16 min-h-screen">
+    <div class="flex flex-col items-center justify-center font-bold text-lg w-full ml-4 p-4">
+        <p class="pt-6 text-stone-100">Welcome back {{ name }}, </p>
+        <p class="text-stone-100">what would you like to do today?</p>
     </div>
-    <div class="welcome-msg">
-        <p>Welcome back {{ name }}, what would you like to do today?</p>
-    </div>
-    <div class="main-content">
-        <div class="container">
+    <div class="grid custom-grid">
+        <div class="flex justify-center px-4 py-2">
             {% if not products %}
                 <p>No product currently available in Pan-Pan Little Shop.</p>
             {% else %}
                 {% for product in products %}
-                    <div class="cards">
-                        <img src="{% static '/assets/logo/panda_icon.png' %}" alt="Product 1">
-                        <div class="product-description">
-                            <p style="font-weight: bold; font-size: 25px; text-align: center;">
+                <div class="flex flex-col items-center gap-5 bg-stone-100 rounded-lg py-4 px-4 mt-6 mx-6 shadow-lg transform transition-transform hover:scale-105 hover:shadow-xl">
+                    <img class="max-h-36 max-w-36 h-36 w-36" src="{% static '/assets/logo/panda_icon.png' %}" alt="Product 1">
+                    <div class="flex flex-col gap-y-4 items-center h-[50%]">
+                        <div class="flex flex-col rounded-lg w-64 h-50 items-left bg-stone-200 pb-5 pt-5 px-6">
+                            <p class="font-bold text-2xl text-center mb-3">
                                 {{ product.name }}
                             </p>
-                            <p style="font-weight: 50%; font-size: 12px; text-align: center;">
+                            <p class="font-md text-xs text-center">
                                 {{ product.description }}
                             </p>  
-                            <p style="font-weight: 50%; font-size: 20px">
+                            <p class="font-md text-xl text-center">
                                 {{ product.price }}
                             </p>      
-                            <p style="font-weight: 50%; font-size: 12px">
+                            <p class="font-md text-xl text-center">
                                 Remaining Stock: {{ product.stock }}
                             </p>
                         </div>
-                    </div>
+                        <div class="flex flex-row gap-x-8 justify-center items-center w-[70%]">
+                            <a href="{% url 'main:edit_product' product.pk %}">
+                                <button class="rounded-lg shadow-sm bg-stone-200 text-stone-800 px-4 py-2 transform transition-transform hover:scale-105 hover:bg-stone-200 hover:shadow-lg">
+                                    Edit
+                                </button>
+                            </a>
+                            <a href="{% url 'main:delete_product' product.pk %}">
+                                <button class="rounded-lg shadow-sm bg-stone-800 px-4 py-2 text-stone-200 transform transition-transform hover:scale-105 hover:bg-stone-900 hover:shadow-lg">
+                                    Delete
+                                </button>
+                        </div>
+                    </div> 
+                </div>
                 {% endfor %}
             {% endif %}
-        </div>
+        </div>  
     </div>
-    <div class="add-container">
+    <div class="flex flex-row items-center justify-center text-stone-100 pt-4">
         <a href="{% url 'main:add_product' %}">
-            <button>Add Product</button>
+            <button class="rounded-lg bg-stone-800 h-10 px-2 hover:bg-stone-950">Add Product</button>
         </a>
     </div>
-    <div class="wrapper">
-        <div class="footer">
-            <p>Last Login Session: {{ last_login }}<p></p>
+    <div class="flex flex-col w-full justify-end pt-10">
+        <div class="flex flex-row justify-between text-white font-bold font-helvetica text-sm mb-2 ml-2 mr-2">
+            <p>Last Login Session: {{ last_login }}</p>
             <p>
                 Pan-Pan Little Shop by Alexander William Lim - 2306207505 - PBP F
             </p>
         </div>
     </div>
-</body>
+</div>
 {% endblock content %}
