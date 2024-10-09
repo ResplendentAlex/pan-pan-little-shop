@@ -31,6 +31,263 @@ This project is licensed under the MIT License - refer to the LICENSE file for m
 **NPM** : 2306207505 <br>
 **Class** : PBP F
 
+## **TUGAS 6**<br>
+### **Implementasi AJAX pada Project**
+1. Buka `views.py`dan tambahkan sebuah fungsi bernama `add_product_ajax`. Fungsi ini yang akan dipanggil untuk menambahkan produk dengan AJAX. Tampilan fungsi adalah sebagai berikut:
+```python
+@csrf_exempt
+@require_POST
+def add_product_ajax(request):
+    name = strip_tags(request.POST.get("name"))
+    description = strip_tags(request.POST.get("description"))
+    price = request.POST.get("price")
+    stock = request.POST.get("stock")
+    user = request.user
+
+    new_product = Product(
+        name=name,
+        price=price,
+        stock=stock,
+        description=description,
+        user=user
+    )
+    new_product.save()
+
+    return HttpResponse(b"CREATED", status=201)
+```
+
+2. Jangan lupa juga untuk menambahkan url path untuk fungsi *views* yang baru kita masukkan ke dalam `urls.py`.
+```python
+from views.py import add_product_ajax
+
+urlpatterns = [
+    ...
+    path('add-product-ajax', add_product_ajax, name='add_product_ajax'),
+]
+```
+3. Kembali lagi ke `views.py`, hapus dua baris dari fungsi `show_main`.
+```python
+products = Product.objects.filter(user=request.user)
+```
+dan
+```python
+`products`: products,
+```
+
+4. Pada `main.html`, hapus bagian *block* conditional dan ganti dengan block ini:
+```html
+<div id="product_cards"></div>
+```
+
+5. Tambahkan *block* `<script>` di bagian bawah `main.html` sebelum `{% endblock content %}.
+```python
+<script>
+  async function getProducts(){
+      return fetch("{% url 'main:show_json' %}").then((res) => res.json())
+  }
+</script>
+```
+
+6. Lalu tambahkan juga script lain dibawah ini pada block `<script>`:
+```js
+<script>
+...
+
+async function refreshProducts(){
+        document.getElementById("product_cards").innerHTML = "";
+        document.getElementById("product_cards").className = "";
+        const products = await getProducts();
+        let htmlString = "";
+        let classNameString = "";
+        const modal = document.getElementById('crudModal');
+        const modalContent = document.getElementById('crudModalContent');
+        
+        if (products.length === 0) {
+            classNameString = "flex flex-col items-center justify-center min-h-[24rem] p-6"
+            htmlString = `
+                <div class="flex flex-col items-center justify-center min-h-[24rem] p-6">
+                    <p class="text-center text-gray-600 mt-4">Belum ada data mood pada mental health tracker.</p>
+                </div>
+            `;
+        }
+        else {
+            classNameString = "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
+            products.forEach((item) => {
+                const product_name = DOMPurify.sanitize(item.fields.name);
+                const description = DOMPurify.sanitize(item.fields.description);
+                htmlString += `
+                <div class="flex flex-col items-center gap-5 bg-stone-100 rounded-lg py-4 px-4 mt-6 mx-6 shadow-lg transform transition-transform hover:scale-105 hover:shadow-xl">
+                    <img class="max-h-36 max-w-36 h-36 w-36" src="{% static '/assets/logo/panda_icon.png' %}" alt="Product 1">
+                    <div class="flex flex-col gap-y-4 items-center h-[50%]">
+                        <div class="flex flex-col rounded-lg w-64 h-50 items-left bg-stone-200 pb-5 pt-5 px-6">
+                            <p class="font-bold text-2xl text-center mb-3">
+                                ${product_name}
+                            </p>
+                            <p class="font-md text-xs text-center">
+                                ${description}
+                            </p>  
+                            <p class="font-md text-xl text-center">
+                                ${item.fields.price}
+                            </p>      
+                            <p class="font-md text-xl text-center">
+                                Remaining Stock: ${item.fields.stock}
+                            </p>
+                        </div>
+                        <div class="flex flex-row gap-x-8 justify items-center w-[70%]">
+                            <a href="/edit/${item.pk}/">
+                                <button class="rounded-lg shadow-sm bg-gray-300 text-stone-800 px-4 py-2 transform transition-transform hover:scale-105 hover:bg-gray-400 hover:shadow-lg">
+                                    Edit
+                                </button>
+                            </a>
+                            <a href="/delete/${item.pk}/">
+                                <button class="rounded-lg shadow-sm bg-stone-800 px-4 py-2 text-stone-200 transform transition-transform hover:scale-105 hover:bg-stone-900 hover:shadow-lg">
+                                    Delete
+                                </button>
+                            </a>
+                        </div>
+                    </div> 
+                </div>
+                `;
+            });
+        }
+        document.getElementById("product_cards").className = classNameString;
+        document.getElementById("product_cards").innerHTML = htmlString;
+    }
+    
+    refreshProducts();
+</script>
+```
+
+7. Lalu, masih pada `main.html`, tambahkan juga *block* berikut ini dibawah `div` dengan `id``product_cards`.
+```html
+<div id="crudModal" tabindex="-1" aria-hidden="true" class="hidden fixed inset-0 z-50 w-full flex items-center justify-center bg-gray-800 bg-opacity-50 overflow-x-hidden overflow-y-auto transition-opacity duration-300 ease-out">
+                <div id="crudModalContent" class="relative bg-white rounded-lg shadow-lg w-5/6 sm:w-3/4 md:w-1/2 lg:w-1/3 mx-4 sm:mx-0 transform scale-95 opacity-0 transition-transform transition-opacity duration-300 ease-out">
+                    <!-- Modal header -->
+                    <div class="flex items-center justify-between p-4 border-b rounded-t">
+                        <h3 class="text-xl font-semibold text-gray-900">
+                            Add New Product
+                        </h3>
+                        <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center" id="closeModalBtn">
+                            <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                            </svg>
+                            <span class="sr-only">Close modal</span>
+                        </button>
+                    </div>
+                    <div class="px-6 py-4 space-y-6 form-style">
+                        <form id="productForm">
+                            <div class="mb-4">  
+                                <label for="name" class="block text-sm font-medium text-gray-700">Product Name</label>
+                                <input type="text" id="product" name="name" class="mt-1 block w-full border border-gray-300 rounded-md p-2 hover:border-indigo-700" placeholder="Enter product name" required>
+                            </div>
+                            <div class="mb-4">
+                                <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
+                                <textarea id="description" name="description" rows="3" class="mt-1 block w-full h-52 resize-none border border-gray-300 rounded-md p-2 hover:border-indigo-700" placeholder="Enter product description" required></textarea>
+                            </div>
+                            <div class="mb-4">
+                                <label for="price" class="block text-sm font-medium text-gray-700">Price</label>
+                                <input type="number" id="price" name="price" class="mt-1 block w-full border border-gray-300 rounded-md p-2 hover:border-indigo-700" placeholder="Enter product price" required>
+                            </div>
+                            <div class="mb-4">
+                                <label for="stock" class="block text-sm font-medium text-gray-700">Stock</label>
+                                <input type="number" id="stock" name="stock" class="mt-1 block w-full border border-gray-300 rounded-md p-2 hover:border-indigo-700" placeholder="Enter product stock" required>
+                            </div>
+                        </form>
+                    </div>
+                    div class="flex flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-2 p-6 border-t border-gray-200 rounded-b justify-center md:justify-end">
+                        <button type="button" class="bg-gray-300 hover:bg-gray-400 text-stone-800 font-bold py-2 px-4 rounded-lg" id="cancelButton">Cancel</button>
+                        <button type="submit" id="submitProduct" form="productForm" class="bg-stone-800 hover:bg-stone-900 text-white font-bold py-2 px-4 rounded-lg">Save</button>
+                    </div>
+                </div>
+            </div>  
+```
+8. Pada tag `<script>`, masukkan potongan kode berikut:
+```js
+function showModal() {
+        const modal = document.getElementById('crudModal');
+        const modalContent = document.getElementById('crudModalContent');
+
+        modal.classList.remove('hidden'); 
+        setTimeout(() => {
+            modalContent.classList.remove('opacity-0', 'scale-95');
+            modalContent.classList.add('opacity-100', 'scale-100');
+        }, 50); 
+    }
+
+    function hideModal() {
+        const modal = document.getElementById('crudModal');
+        const modalContent = document.getElementById('crudModalContent');
+
+        modalContent.classList.remove('opacity-100', 'scale-100');
+        modalContent.classList.add('opacity-0', 'scale-95');
+
+        setTimeout(() => {
+            modal.classList.add('hidden');
+        }, 150); 
+    }
+
+    document.getElementById("cancelButton").addEventListener("click", hideModal);
+    document.getElementById("closeModalBtn").addEventListener("click", hideModal);
+    document.getElementById("submitProduct").onclick = addProduct
+```
+
+9. Jangan lupa juga untuk mengganti tombol Add New Product dengan link yang baru seperti berikut:
+```html
+<div class="flex flex-row items-center justify-center text-stone-100 pt-4">
+    <button data-modal-target="crudModal" data-modal-toggle="crudModal" class="btn bg-stone-800 hover:bg-stone-950 text-white font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105" onclick="showModal();">
+        Add Product
+    </button>
+</div>
+```
+
+10. Pada block `<script>`, tambahkan kode berikut ini yang digunakan untuk menambahkan produk menggunakan JavaScript:
+```js
+function addProduct() {
+    fetch("{% url 'main:add_product_ajax' %}", {
+        method: "POST",
+        body: new FormData(document.querySelector('#productForm')),
+    })
+    .then(response => refreshProducts())
+
+    document.getElementById("ProductForm").reset(); 
+    document.querySelector("[data-modal-toggle='crudModal']").click();
+
+    return false;
+}
+```
+### **Manfaat penggunaan JavaScript dalam pengembangan aplikasi web.**
+1. **Interaktivitas**: JavaScript memungkinkan pengembanga untuk membuat halaman web yang interkatif. Melalui JavaScript, elemen-elemen pada halaman web dapat merespons tindakan pengguna seperti klik, hover, dan input.
+
+2. **Pengolahan data di Sisi Klien**: JavaScript memungkinkan pengolahan daat di sisi klien tanpa perlu mengirim data ke server. Ini dapat mengurangi beban yang ditanggung oleh server sehingga aplikasi web dapat berjalan dengan lebih optimal.
+
+3. **Manipulasi DOM**: Elemen-elemen pada halaman web dapat ditambahkan, dihapus, dan diubah tanpa perlu memuat ulang halaman.
+
+### **Penggunaan `await` ketika menggunakan `fetch()`**
+Fungsi `await` saat melakukan `fetch()` adalah untuk menunggu hingga Promise yang dikembalikan `fetch()` selesai. Ini memungkinan agar kode selanjutnya tidak akan dieksekusi sampai `fetch()` selesai mengambil data dari server.
+
+Jika  `await` tidak digunakan, maka fungsi `fetch()` akan berisi Promise yang masih pending, sehingga data yang dikembalikan tidak akan sesuai dengan harapan kita.
+
+### **Peran decorator `csrf_exempt` pada *view* yang akan digunakan untuk AJAX `POST`.**
+Ada beberapa peran penting yang dimainkan oleh `csrf_exempt`. Beberapa tersebut adalah sebagai berikut:
+1. `csrf_exempt` menonaktifkan pemeriksaan CSRF untuk view tertentu karena saat kita melakukan permintaan AJAX `POST` dari klien.
+Tanpa adanya `csrf_exempt` tersebut, mungkin saja bahwa permintaan akan ditolak oleh karena kita memberikan token CSRF yang valid.
+
+2. Pada pengembangan *views* tertentu, akan lebih baik bila kita menggunakan `csrf_exempt` agar kita dapat menghindari permintaan
+atau request ke server yang ditolak karena adanya token CSRF yang tidak valid.
+
+3. Ini juga digunakan untuk melakukan permintaan dari sumber eksternal. Sumber tersebut tentunya tidak dapat menyediakan token CSRF
+yang valid sehingga kita harus menonaktifkan CSRF pada views agar permintaan dapat diproses sesuai harapan kita.
+
+### **Pembersihan data *input* pengguna pada *backend***
+1. Dari segi keamanan, pembersihan data di *backend* membantu melindungi aplikasi dari serangan siber seperti SQL Injection, XSS, dan lain-lain. Tanpa pembersihan data tersebut di backend,
+penyerang dapat melakukan manipulasi data di frontend ataupun mengirim permintaan langsung ke server, dan melewati validasi frontend.
+
+2. Backend juga memastikan bahwa data yang masuk ke dalam sistem valid dan konsisten sehingga struktur data yang dimasukkan dapat dipastikan
+mengikuti aturan dan format yang diharapakan oleh basis data pada aplikasi web kita.
+
+3. Jika ada pembaruan pada logika ataupun aturan pada validasi data, kita tidak perlu melakukannya pada setiap klien yang menggunakan aplikasi kita. Perubahan yang perlu dilakukan
+dapat hanya dilakukan pada backend aplikasi kita.
+
 ## **TUGAS 5**<br>
 ### **Implementasi Step-by-Step Styling pada Project**
 1. Buatlah sebuah direktori pada root bernama `templates/css` dan masukkan sebuah file baru bernama `global.css`
