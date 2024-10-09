@@ -3,6 +3,7 @@
 
 {% block meta %}
     <title>Pan-Pan Little Shop</title>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.7/dist/purify.min.js"></script>
 {% endblock meta %}
 
 {% block content %}
@@ -14,56 +15,170 @@
     </div>
     <div class="grid custom-grid">
         <div class="flex justify-center px-4 py-2">
-            {% if not products %}
-                <p>No product currently available in Pan-Pan Little Shop.</p>
-            {% else %}
-                {% for product in products %}
-                <div class="flex flex-col items-center gap-5 bg-stone-100 rounded-lg py-4 px-4 mt-6 mx-6 shadow-lg transform transition-transform hover:scale-105 hover:shadow-xl">
-                    <img class="max-h-36 max-w-36 h-36 w-36" src="{% static '/assets/logo/panda_icon.png' %}" alt="Product 1">
-                    <div class="flex flex-col gap-y-4 items-center h-[50%]">
-                        <div class="flex flex-col rounded-lg w-64 h-50 items-left bg-stone-200 pb-5 pt-5 px-6">
-                            <p class="font-bold text-2xl text-center mb-3">
-                                {{ product.name }}
-                            </p>
-                            <p class="font-md text-xs text-center">
-                                {{ product.description }}
-                            </p>  
-                            <p class="font-md text-xl text-center">
-                                {{ product.price }}
-                            </p>      
-                            <p class="font-md text-xl text-center">
-                                Remaining Stock: {{ product.stock }}
-                            </p>
-                        </div>
-                        <div class="flex flex-row gap-x-8 justify-center items-center w-[70%]">
-                            <a href="{% url 'main:edit_product' product.pk %}">
-                                <button class="rounded-lg shadow-sm bg-stone-200 text-stone-800 px-4 py-2 transform transition-transform hover:scale-105 hover:bg-stone-200 hover:shadow-lg">
-                                    Edit
-                                </button>
-                            </a>
-                            <a href="{% url 'main:delete_product' product.pk %}">
-                                <button class="rounded-lg shadow-sm bg-stone-800 px-4 py-2 text-stone-200 transform transition-transform hover:scale-105 hover:bg-stone-900 hover:shadow-lg">
-                                    Delete
-                                </button>
-                        </div>
-                    </div> 
+            <div id="product_cards"></div>
+            <div id="crudModal" tabindex="-1" aria-hidden="true" class="hidden fixed inset-0 z-50 w-full flex items-center justify-center bg-gray-800 bg-opacity-50 overflow-x-hidden overflow-y-auto transition-opacity duration-300 ease-out">
+                <div id="crudModalContent" class="relative bg-white rounded-lg shadow-lg w-5/6 sm:w-3/4 md:w-1/2 lg:w-1/3 mx-4 sm:mx-0 transform scale-95 opacity-0 transition-transform transition-opacity duration-300 ease-out">
+                    <!-- Modal header -->
+                    <div class="flex items-center justify-between p-4 border-b rounded-t">
+                        <h3 class="text-xl font-semibold text-gray-900">
+                            Add New Product
+                        </h3>
+                        <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center" id="closeModalBtn">
+                            <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                            </svg>
+                            <span class="sr-only">Close modal</span>
+                        </button>
+                    </div>
+                    <!-- Modal body -->
+                    <div class="px-6 py-4 space-y-6 form-style">
+                        <form id="productForm">
+                            <div class="mb-4">  
+                                <label for="name" class="block text-sm font-medium text-gray-700">Product Name</label>
+                                <input type="text" id="product" name="name" class="mt-1 block w-full border border-gray-300 rounded-md p-2 hover:border-indigo-700" placeholder="Enter product name" required>
+                            </div>
+                            <div class="mb-4">
+                                <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
+                                <textarea id="description" name="description" rows="3" class="mt-1 block w-full h-52 resize-none border border-gray-300 rounded-md p-2 hover:border-indigo-700" placeholder="Enter product description" required></textarea>
+                            </div>
+                            <div class="mb-4">
+                                <label for="price" class="block text-sm font-medium text-gray-700">Price</label>
+                                <input type="number" id="price" name="price" class="mt-1 block w-full border border-gray-300 rounded-md p-2 hover:border-indigo-700" placeholder="Enter product price" required>
+                            </div>
+                            <div class="mb-4">
+                                <label for="stock" class="block text-sm font-medium text-gray-700">Stock</label>
+                                <input type="number" id="stock" name="stock" class="mt-1 block w-full border border-gray-300 rounded-md p-2 hover:border-indigo-700" placeholder="Enter product stock" required>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- Modal footer -->
+                    <div class="flex flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-2 p-6 border-t border-gray-200 rounded-b justify-center md:justify-end">
+                        <button type="button" class="bg-gray-300 hover:bg-gray-400 text-stone-800 font-bold py-2 px-4 rounded-lg" id="cancelButton">Cancel</button>
+                        <button type="submit" id="submitProduct" form="productForm" class="bg-stone-800 hover:bg-stone-900 text-white font-bold py-2 px-4 rounded-lg">Save</button>
+                    </div>
                 </div>
-                {% endfor %}
-            {% endif %}
-        </div>  
+            </div>  
     </div>
     <div class="flex flex-row items-center justify-center text-stone-100 pt-4">
-        <a href="{% url 'main:add_product' %}">
-            <button class="rounded-lg bg-stone-800 h-10 px-2 hover:bg-stone-950">Add Product</button>
-        </a>
+        <button data-modal-target="crudModal" data-modal-toggle="crudModal" class="btn bg-stone-800 hover:bg-stone-950 text-white font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105" onclick="showModal();">
+            Add Product
+        </button>
     </div>
     <div class="flex flex-col w-full justify-end pt-10">
         <div class="flex flex-row justify-between text-white font-bold font-helvetica text-sm mb-2 ml-2 mr-2">
             <p>Last Login Session: {{ last_login }}</p>
             <p>
                 Pan-Pan Little Shop by Alexander William Lim - 2306207505 - PBP F
-            </p>
+            </p>    
         </div>
     </div>
 </div>
+
+<script>
+    async function getProducts(){
+        return fetch("{% url 'main:show_json' %}").then((res) => res.json())
+    }
+
+    async function refreshProducts(){
+        document.getElementById("product_cards").innerHTML = "";
+        document.getElementById("product_cards").className = "";
+        const products = await getProducts();
+        let htmlString = "";
+        let classNameString = "";
+        const modal = document.getElementById('crudModal');
+        const modalContent = document.getElementById('crudModalContent');
+        
+        if (products.length === 0) {
+            classNameString = "flex flex-col items-center justify-center min-h-[24rem] p-6"
+            htmlString = `
+                <div class="flex flex-col items-center justify-center min-h-[24rem] p-6">
+                    <p class="text-center text-gray-600 mt-4">Belum ada data mood pada mental health tracker.</p>
+                </div>
+            `;
+        }
+        else {
+            classNameString = "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
+            products.forEach((item) => {
+                const product_name = DOMPurify.sanitize(item.fields.name);
+                const description = DOMPurify.sanitize(item.fields.description);
+                htmlString += `
+                <div class="flex flex-col items-center gap-5 bg-stone-100 rounded-lg py-4 px-4 mt-6 mx-6 shadow-lg transform transition-transform hover:scale-105 hover:shadow-xl">
+                    <img class="max-h-36 max-w-36 h-36 w-36" src="{% static '/assets/logo/panda_icon.png' %}" alt="Product 1">
+                    <div class="flex flex-col gap-y-4 items-center h-[50%]">
+                        <div class="flex flex-col rounded-lg w-64 h-50 items-left bg-stone-200 pb-5 pt-5 px-6">
+                            <p class="font-bold text-2xl text-center mb-3">
+                                ${product_name}
+                            </p>
+                            <p class="font-md text-xs text-center">
+                                ${description}
+                            </p>  
+                            <p class="font-md text-xl text-center">
+                                ${item.fields.price}
+                            </p>      
+                            <p class="font-md text-xl text-center">
+                                Remaining Stock: ${item.fields.stock}
+                            </p>
+                        </div>
+                        <div class="flex flex-row gap-x-8 justify items-center w-[70%]">
+                            <a href="/edit/${item.pk}/">
+                                <button class="rounded-lg shadow-sm bg-gray-300 text-stone-800 px-4 py-2 transform transition-transform hover:scale-105 hover:bg-gray-400 hover:shadow-lg">
+                                    Edit
+                                </button>
+                            </a>
+                            <a href="/delete/${item.pk}/">
+                                <button class="rounded-lg shadow-sm bg-stone-800 px-4 py-2 text-stone-200 transform transition-transform hover:scale-105 hover:bg-stone-900 hover:shadow-lg">
+                                    Delete
+                                </button>
+                            </a>
+                        </div>
+                    </div> 
+                </div>
+                `;
+            });
+        }
+        document.getElementById("product_cards").className = classNameString;
+        document.getElementById("product_cards").innerHTML = htmlString;
+    }
+
+    function showModal() {
+        const modal = document.getElementById('crudModal');
+        const modalContent = document.getElementById('crudModalContent');
+
+        modal.classList.remove('hidden'); 
+        setTimeout(() => {
+            modalContent.classList.remove('opacity-0', 'scale-95');
+            modalContent.classList.add('opacity-100', 'scale-100');
+        }, 50); 
+    }
+
+    function hideModal() {
+        const modal = document.getElementById('crudModal');
+        const modalContent = document.getElementById('crudModalContent');
+
+        modalContent.classList.remove('opacity-100', 'scale-100');
+        modalContent.classList.add('opacity-0', 'scale-95');
+
+        setTimeout(() => {
+            modal.classList.add('hidden');
+        }, 150); 
+    }
+
+    function addProduct() {
+        fetch("{% url 'main:add_product_ajax' %}", {
+            method: "POST",
+            body: new FormData(document.querySelector('#productForm')),
+        })
+        .then(response => refreshProducts())
+
+        document.getElementById("ProductForm").reset(); 
+        document.querySelector("[data-modal-toggle='crudModal']").click();
+
+        return false;
+    }
+
+    document.getElementById("cancelButton").addEventListener("click", hideModal);
+    document.getElementById("closeModalBtn").addEventListener("click", hideModal);
+    document.getElementById("submitProduct").onclick = addProduct
+    refreshProducts();
+</script>
 {% endblock content %}
